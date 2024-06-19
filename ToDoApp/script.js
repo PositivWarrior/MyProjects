@@ -1,5 +1,14 @@
 let todoList = [];
 
+let todoInput = document.getElementById('todo-input');
+
+// Add event listener to todo-input for Enter key press
+todoInput.addEventListener('keydown', (event) => {
+	if (event.key === 'Enter') {
+		addTodo();
+	}
+});
+
 // Load Todo List from local storage
 function loadTodoList() {
 	let storedTodoList = localStorage.getItem('todoList');
