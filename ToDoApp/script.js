@@ -36,7 +36,7 @@ function renderTodoList() {
                 <span ${todo.completed ? 'class="completed"' : ''}>${
 			todo.text
 		}</span>
-                <button class="delete-btn" data-index="${index}">X</button>
+                <button class="delete-btn" data-index="${index}" style="background-color: red; color: white;">Del</button>
             </li>
         `;
 	});
@@ -51,6 +51,14 @@ function renderTodoList() {
 function deleteTodo(event) {
 	let index = event.target.getAttribute('data-index');
 	todoList.splice(index, 1);
+	saveTodoList();
+	renderTodoList();
+}
+
+document.getElementById('delete-btn').addEventListener('click', deleteAllTodos);
+
+function deleteAllTodos() {
+	todoList = [];
 	saveTodoList();
 	renderTodoList();
 }
