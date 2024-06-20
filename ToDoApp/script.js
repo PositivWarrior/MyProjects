@@ -1,78 +1,95 @@
-let todoList = [];
+document.addEventListener('DOMContentLoaded', () => {
+	let todoList = [];
 
-let todoInput = document.getElementById('todo-input');
+	const todoInput = document.getElementById('todo-input');
+	const todoForm = document.getElementById('todo-form');
+	const todoListElement = document.getElementById('todo-list');
+	const deleteAllBtn = document.getElementById('delete-btn');
 
-// Add event listener to todo-input for Enter key press
-todoInput.addEventListener('keydown', (event) => {
-	if (event.key === 'Enter') {
+	todoForm.addEventListener('submit', (event) => {
+		event.preventDefault();
 		addTodo();
-	}
-});
+	});
 
-// Load Todo List from local storage
-function loadTodoList() {
-	let storedTodoList = localStorage.getItem('todoList');
-	if (storedTodoList) {
-		todoList = JSON.parse(storedTodoList);
-	}
-}
+	deleteAllBtn.addEventListener('click', deleteAllTodos);
 
-// Save Todo List to local storage
-function saveTodoList() {
-	localStorage.setItem('todoList', JSON.stringify(todoList));
-}
+	function addTodo() {
+		const todoText = todoInput.value.trim();
+		if (todoText === '') {
+			alert('Please enter a todo item.');
+			return;
+		}
 
-document.getElementById('add-btn').addEventListener('click', addTodo);
-
-function addTodo() {
-	let todoInput = document.getElementById('todo-input');
-	let todoText = todoInput.value.trim();
-
-	if (todoText !== '') {
 		todoList.push({ text: todoText, completed: false });
 		todoInput.value = '';
 		saveTodoList();
 		renderTodoList();
 	}
-}
 
-function renderTodoList() {
-	let todoListHTML = '';
-	todoList.forEach((todo, index) => {
-		todoListHTML += `
-            <li>
-                <input type="checkbox" ${todo.completed ? 'checked' : ''}>
-                <span ${todo.completed ? 'class="completed"' : ''}>${
-			todo.text
-		}</span>
-                <button class="delete-btn" data-index="${index}" style="background-color: red; color: white;">Del</button>
-            </li>
-        `;
-	});
-	document.getElementById('todo-list').innerHTML = todoListHTML;
+	function renderTodoList() {
+		todoListElement.innerHTML = '';
+		todoList.forEach((todo, index) => {
+			const li = document.createElement('li');
+			li.className = 'list-group-item todo-item';
 
-	let deleteBtns = document.querySelectorAll('.delete-btn');
-	deleteBtns.forEach((btn) => {
-		btn.addEventListener('click', deleteTodo);
-	});
-}
+			const checkbox = document.createElement('input');
+			checkbox.type = 'checkbox';
+			checkbox.checked = todo.completed;
+			checkbox.addEventListener('change', () =>
+				toggleTodoComplete(index),
+			);
 
-function deleteTodo(event) {
-	let index = event.target.getAttribute('data-index');
-	todoList.splice(index, 1);
-	saveTodoList();
+			const span = document.createElement('span');
+			span.textContent = todo.text;
+			if (todo.completed) {
+				span.classList.add('completed');
+			}
+
+			const deleteBtn = document.createElement('button');
+			deleteBtn.className = 'delete-btn';
+			deleteBtn.textContent = 'Del';
+			deleteBtn.addEventListener('click', () => deleteTodo(index));
+
+			li.appendChild(checkbox);
+			li.appendChild(span);
+			li.appendChild(deleteBtn);
+			todoListElement.appendChild(li);
+		});
+	}
+
+	function deleteTodo(index) {
+		todoList.splice(index, 1);
+		saveTodoList();
+		renderTodoList();
+	}
+
+	function deleteAllTodos() {
+		console.log('Delete All button clicked');
+		if (confirm('Are you sure you want to delete all todos?')) {
+			todoList = [];
+			console.log('All todos deleted');
+			saveTodoList();
+			renderTodoList();
+		}
+	}
+
+	function toggleTodoComplete(index) {
+		todoList[index].completed = !todoList[index].completed;
+		saveTodoList();
+		renderTodoList();
+	}
+
+	function saveTodoList() {
+		localStorage.setItem('todoList', JSON.stringify(todoList));
+	}
+
+	function loadTodoList() {
+		const storedTodoList = localStorage.getItem('todoList');
+		if (storedTodoList) {
+			todoList = JSON.parse(storedTodoList);
+		}
+	}
+
+	loadTodoList();
 	renderTodoList();
-}
-
-document.getElementById('delete-btn').addEventListener('click', deleteAllTodos);
-
-function deleteAllTodos() {
-	todoList = [];
-	saveTodoList();
-	renderTodoList();
-}
-
-loadTodoList();
-renderTodoList();
-
-document.addEventListener('DOMContentLoaded', renderTodoList);
+});

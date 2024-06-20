@@ -6,34 +6,57 @@
 			name="viewport"
 			content="width=device-width, initial-scale=1.0"
 		/>
-		<title>ToDo App by Kacpru</title>
+		<title>Modern ToDo App</title>
+		<link
+			rel="stylesheet"
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+		/>
 		<link
 			rel="stylesheet"
 			href="style.css"
 		/>
 	</head>
 	<body>
-		<h1>ToDo App</h1>
-
-		<div class="todo-container">
-			<input
-				type="text"
-				id="todo-input"
-				placeholder="Add a new task..."
-			/>
-			<div class="button-container">
-				<button id="add-btn">Add</button>
-				<button
-					id="delete-btn"
-					style="background-color: red; color: white"
-				>
-					Delete All
-				</button>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 offset-md-3">
+					<h1 class="text-center">Todo List</h1>
+					<form id="todo-form">
+						<div class="form-group">
+							<input
+								type="text"
+								id="todo-input"
+								class="form-control"
+								placeholder="Add a new todo"
+							/>
+							<div class="button-container mt-2">
+								<button
+									id="add-btn"
+									type="submit"
+									class="btn btn-primary"
+								>
+									Add
+								</button>
+								<button
+									id="delete-btn"
+									type="button"
+									class="btn btn-danger"
+								>
+									Delete All
+								</button>
+							</div>
+						</div>
+					</form>
+					<div class="todo-list mt-4">
+						<ul
+							id="todo-list"
+							class="list-group"
+						></ul>
+					</div>
+				</div>
 			</div>
-
-			<ul id="todo-list"></ul>
 		</div>
-		<footer class="footer">Made by Kacpru</footer>
+		<footer class="footer text-center mt-4">Made by Kacpru</footer>
 		<script src="script.js"></script>
 	</body>
 </html>
