@@ -1,33 +1,45 @@
 const express = require('express');
-const cors = require('cors');
+const http = require('http');
+const path = require('path');
+const socketIo = require('socket.io');
+const formatMessage = require('./utils/messages');
+
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
 
-app.use(cors());
+// Static folder
+app.use(express.static(path.join(__dirname, 'public')));
 
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const botName = 'MadChatter BOT';
 
-const users = {};
-
+// Run when client connects
 io.on('connection', (socket) => {
-	socket.on('new-user', (name) => {
-		users[socket.id] = name;
-		socket.broadcast.emit('user-connected', name);
-	});
-	socket.on('send-chat-message', (message) => {
-		socket.broadcast.emit('chat-message', {
-			message: message,
-			name: users[socket.id],
-		});
-	});
+	// Welcome current user
+	socket.emit('message', formatMessage(botName, 'Welcome to Mad Chatter!'));
+
+	// Broadcast on user connects
+	socket.broadcast.emit(
+		'message',
+		formatMessage(botName, 'A user has joined the MadChatter!'),
+	);
+
+	// On user disconnect
 	socket.on('disconnect', () => {
-		socket.broadcast.emit('user-disconnected', users[socket.id]);
-		delete users[socket.id];
+		io.emit(
+			'message',
+			formatMessage(botName, 'A user has left the MadChatter!'),
+		);
+	});
+
+	// Listen for chatMessage
+	socket.on('chatMessage', (msg) => {
+		io.emit('message', formatMessage('USER', msg));
 	});
 });
 
 // Start the server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`);
+	console.log(`MadChatter is running on port ${PORT}`);
 });
