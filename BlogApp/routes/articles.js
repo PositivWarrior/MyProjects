@@ -6,7 +6,7 @@ router.get('/new', (req, res) => {
 	res.render('articles/new', { article: new Article() });
 });
 
-router.get('/new/:id', async (req, res) => {
+router.get('/edit/:id', async (req, res) => {
 	const article = await Article.findById(req.params.id);
 	res.render('articles/edit', { article: article });
 });
